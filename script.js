@@ -2,7 +2,7 @@
 // API configuration is loaded from config.js (not tracked in Git)
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
-// Get elements from the DOM
+// Get elements from the DOM (document object manager)
 const searchBtn = document.getElementById('search-btn');
 const cityInput = document.getElementById('city-input');
 const weatherDisplay = document.getElementById('weather-display');
@@ -30,20 +30,27 @@ async function getWeather() {
     // Show loading message
     weatherDisplay.innerHTML = '<p>Loading...</p>';
     
-    try {
-        // Fetch weather data from API
+try {
         const response = await fetch(`${API_URL}?q=${city}&appid=${API_KEY}&units=metric`);
         
-        // Check if request was successful
-        if (!response.ok) {
-            throw new Error('City not found');
+        if (response.status === 404) {
+            throw new Error('City not found. Please check the spelling.');
         }
         
+        if (!response.ok) {
+            throw new Error('Unable to fetch weather data. Please try again.');
+        }
+        
+    
         const data = await response.json();
         displayWeather(data);
         
     } catch (error) {
-        weatherDisplay.innerHTML = `<p style="color: red;">Error: ${error.message}</p>`;
+        if (error.message.includes('fetch')){
+            weatherDisplay.innerHTML = '<p style="color: red;">Network error. Check your internet connection.</p>';
+        } else {
+            weatherDisplay.innerHTML = `<p style="color: red;">${error.message}</p>`;
+        } 
     }
 }
 
