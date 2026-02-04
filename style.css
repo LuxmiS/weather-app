@@ -14,7 +14,7 @@ body {
 }
 
 .container {
-    background: rgb(48, 41, 88);
+    background: rgb(195, 198, 252);
     padding: 2rem;
     border-radius: 10px;
     box-shadow: 0 10px 25px rgba(0,0,0,0.2);
@@ -24,7 +24,7 @@ body {
 
 h1 {
     text-align: center;
-    color: #e6e6e6;
+    color: #020202;
     margin-bottom: 1.5rem;
 }
 
@@ -59,4 +59,38 @@ h1 {
 .weather-display {
     text-align: center;
     color: #333;
+}
+
+.weather-info {
+    margin-top: 1rem;
+}
+
+.weather-info img {
+    width: 100px;
+    height: 100px;
+}
+
+.temperature {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0.5rem 0;
+}
+
+.description {
+    font-size: 1.5rem;
+    text-transform: capitalize;
+    margin-bottom: 1rem;
+}
+
+.details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #ddd;
+}
+
+.details p {
+    font-size: 1rem;
 }
