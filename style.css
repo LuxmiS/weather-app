@@ -227,3 +227,60 @@ h1 {
         font-size: 1.2rem;
     }
 }
+
+.search-history {
+    margin-bottom: 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    min-height: 40px;
+}
+
+.history-item {
+    padding: 8px 16px;
+    background: #f0f0f0;
+    border: 2px solid #ddd;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #555;
+    transition: all 0.3s ease;
+    animation: slideIn 0.3s ease-out;
+}
+
+.history-item:hover {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+    transform: translateY(-2px);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.history-item .remove-btn {
+    margin-left: 8px;
+    color: #999;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.history-item:hover .remove-btn {
+    color: white;
+}
+
+.clear-history {
+    padding: 6px 12px;
+    background: transparent;
+    border: 1px solid #ddd;
+    border-radius: 15px;
+    cursor: pointer;
+    font-size: 12px;
+    color: #999;
+    transition: all 0.3s ease;
+}
+
+.clear-history:hover {
+    background: #ff6b6b;
+    color: white;
+    border-color: #ff6b6b;
+}

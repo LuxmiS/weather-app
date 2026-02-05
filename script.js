@@ -5,26 +5,29 @@ const cityInput = document.getElementById('city-input');
 const weatherDisplay = document.getElementById('weather-display');
 const celsiusBtn = document.getElementById('celsius-btn');
 const fahrenheitBtn = document.getElementById('fahrenheit-btn');
+const searchHistoryDiv = document.getElementById('search-history');
 
-// Track current unit and weather data
+// Track current unit, weather data, and search history
 let currentUnit = 'celsius';
 let currentWeatherData = null;
+let searchHistory = JSON.parse(localStorage.getItem('weatherSearchHistory')) || [];
 
 // Event listeners
-searchBtn.addEventListener('click', getWeather);
+searchBtn.addEventListener('click', () => getWeather(cityInput.value.trim()));
 cityInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
-        getWeather();
+        getWeather(cityInput.value.trim());
     }
 });
 
 celsiusBtn.addEventListener('click', () => switchUnit('celsius'));
 fahrenheitBtn.addEventListener('click', () => switchUnit('fahrenheit'));
 
+// Initialize: display search history on load
+displaySearchHistory();
+
 // Fetch weather data
-async function getWeather() {
-    const city = cityInput.value.trim();
-    
+async function getWeather(city) {
     if (city === '') {
         weatherDisplay.innerHTML = '<p style="color: red;">Please enter a city name</p>';
         return;
@@ -45,7 +48,12 @@ async function getWeather() {
         
         const data = await response.json();
         currentWeatherData = data;
+        
+        // Add to search history
+        addToHistory(data.name);
+        
         displayWeather(data);
+        cityInput.value = ''; // Clear input after successful search
         
     } catch (error) {
         if (error.message.includes('fetch')) {
@@ -56,11 +64,63 @@ async function getWeather() {
     }
 }
 
+// Add city to search history
+function addToHistory(city) {
+    // Remove city if it already exists (to avoid duplicates)
+    searchHistory = searchHistory.filter(item => item.toLowerCase() !== city.toLowerCase());
+    
+    // Add to beginning of array
+    searchHistory.unshift(city);
+    
+    // Keep only last 5 searches
+    if (searchHistory.length > 5) {
+        searchHistory.pop();
+    }
+    
+    // Save to localStorage
+    localStorage.setItem('weatherSearchHistory', JSON.stringify(searchHistory));
+    
+    // Update display
+    displaySearchHistory();
+}
+
+// Display search history
+function displaySearchHistory() {
+    if (searchHistory.length === 0) {
+        searchHistoryDiv.innerHTML = '';
+        return;
+    }
+    
+    let historyHTML = searchHistory.map(city => 
+        `<span class="history-item" onclick="getWeather('${city}')">
+            ${city}
+            <span class="remove-btn" onclick="event.stopPropagation(); removeFromHistory('${city}')">×</span>
+        </span>`
+    ).join('');
+    
+    historyHTML += `<button class="clear-history" onclick="clearHistory()">Clear All</button>`;
+    
+    searchHistoryDiv.innerHTML = historyHTML;
+}
+
+// Remove single item from history
+function removeFromHistory(city) {
+    searchHistory = searchHistory.filter(item => item !== city);
+    localStorage.setItem('weatherSearchHistory', JSON.stringify(searchHistory));
+    displaySearchHistory();
+}
+
+// Clear all history
+function clearHistory() {
+    searchHistory = [];
+    localStorage.removeItem('weatherSearchHistory');
+    displaySearchHistory();
+}
+
 // Switch temperature unit
 function switchUnit(unit) {
     currentUnit = unit;
     
-    // Update button styles
     if (unit === 'celsius') {
         celsiusBtn.classList.add('active');
         fahrenheitBtn.classList.remove('active');
@@ -69,7 +129,6 @@ function switchUnit(unit) {
         celsiusBtn.classList.remove('active');
     }
     
-    // Re-display weather with new unit if data exists
     if (currentWeatherData) {
         displayWeather(currentWeatherData);
     }
@@ -84,7 +143,6 @@ function celsiusToFahrenheit(celsius) {
 function displayWeather(data) {
     const { name, main, weather, wind } = data;
     
-    // Convert temperatures based on current unit
     let temp = main.temp;
     let feelsLike = main.feels_like;
     let unitSymbol = '°C';
