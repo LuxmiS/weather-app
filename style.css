@@ -5,27 +5,71 @@
 }
 
 body {
-    font-family: Arial, sans-serif;
-    background: linear-gradient(135deg, #a5b1e7 0%, #2f3cf7 100%);
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
+    padding: 20px;
 }
 
 .container {
-    background: rgb(195, 198, 252);
+    background: white;
     padding: 2rem;
-    border-radius: 10px;
-    box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    border-radius: 20px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     width: 90%;
     max-width: 500px;
+    animation: fadeIn 1s ease-in;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-50px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 h1 {
     text-align: center;
-    color: #020202;
+    color: #333;
     margin-bottom: 1.5rem;
+    font-size: 2rem;
+}
+
+.unit-toggle {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 1.5rem;
+}
+
+.unit-btn {
+    padding: 8px 20px;
+    border: 2px solid #667eea;
+    background: white;
+    color: #667eea;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
+}
+
+.unit-btn:hover {
+    background: #f0f0f0;
+    transform: translateY(-2px);
+}
+
+.unit-btn.active {
+    background: #667eea;
+    color: white;
+    box-shadow: 0 4px 10px rgba(102, 126, 234, 0.3);
 }
 
 .search-box {
@@ -38,8 +82,14 @@ h1 {
     flex: 1;
     padding: 12px;
     border: 2px solid #ddd;
-    border-radius: 5px;
+    border-radius: 8px;
     font-size: 16px;
+    transition: border-color 0.3s ease;
+}
+
+#city-input:focus {
+    outline: none;
+    border-color: #667eea;
 }
 
 #search-btn {
@@ -47,50 +97,133 @@ h1 {
     background: #667eea;
     color: white;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 16px;
+    font-weight: bold;
+    transition: all 0.3s ease;
 }
 
 #search-btn:hover {
-    background: #334297;
+    background: #5568d3;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+#search-btn:active {
+    transform: translateY(0);
 }
 
 .weather-display {
     text-align: center;
     color: #333;
+    min-height: 200px;
 }
 
 .weather-info {
     margin-top: 1rem;
+    animation: slideIn 1s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.weather-info h2 {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: #333;
 }
 
 .weather-info img {
-    width: 100px;
-    height: 100px;
+    width: 150px;
+    height: 150px;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+    animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+    0%, 100% {
+        transform: translateY(0px);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
 }
 
 .temperature {
-    font-size: 3rem;
+    font-size: 3.5rem;
     font-weight: bold;
     margin: 0.5rem 0;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
 }
 
 .description {
     font-size: 1.5rem;
     text-transform: capitalize;
-    margin-bottom: 1rem;
+    margin-bottom: 1.5rem;
+    color: #666;
+    font-weight: 500;
 }
 
 .details {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 1rem;
-    padding-top: 1rem;
-    border-top: 1px solid #ddd;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.8rem;
+    margin-top: 1.5rem;
+    padding: 1.5rem;
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+    border-radius: 10px;
 }
 
 .details p {
     font-size: 1rem;
+    color: #444;
+    padding: 0.5rem;
+    background: white;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+/* Loading animation */
+.weather-display p {
+    animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0.7;
+    }
+}
+
+/* Responsive design */
+@media (max-width: 480px) {
+    .container {
+        padding: 1.5rem;
+    }
+    
+    h1 {
+        font-size: 1.5rem;
+    }
+    
+    .temperature {
+        font-size: 2.5rem;
+    }
+    
+    .description {
+        font-size: 1.2rem;
+    }
 }

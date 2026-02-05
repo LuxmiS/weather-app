@@ -1,36 +1,38 @@
-// API key from OpenWeatherMap
-// API configuration is loaded from config.js (not tracked in Git)
 const API_URL = 'https://api.openweathermap.org/data/2.5/weather';
 
-// Get elements from the DOM (document object manager)
 const searchBtn = document.getElementById('search-btn');
 const cityInput = document.getElementById('city-input');
 const weatherDisplay = document.getElementById('weather-display');
+const celsiusBtn = document.getElementById('celsius-btn');
+const fahrenheitBtn = document.getElementById('fahrenheit-btn');
 
-// Add event listener to search button
+// Track current unit and weather data
+let currentUnit = 'celsius';
+let currentWeatherData = null;
+
+// Event listeners
 searchBtn.addEventListener('click', getWeather);
-
-// Also allow Enter key to trigger search
 cityInput.addEventListener('keypress', (e) => {
     if (e.key === 'Enter') {
         getWeather();
     }
 });
 
-// Function to fetch weather data
+celsiusBtn.addEventListener('click', () => switchUnit('celsius'));
+fahrenheitBtn.addEventListener('click', () => switchUnit('fahrenheit'));
+
+// Fetch weather data
 async function getWeather() {
     const city = cityInput.value.trim();
     
-    // Validate input
     if (city === '') {
         weatherDisplay.innerHTML = '<p style="color: red;">Please enter a city name</p>';
         return;
     }
     
-    // Show loading message
     weatherDisplay.innerHTML = '<p>Loading...</p>';
     
-try {
+    try {
         const response = await fetch(`${API_URL}?q=${city}&appid=${API_KEY}&units=metric`);
         
         if (response.status === 404) {
@@ -41,31 +43,66 @@ try {
             throw new Error('Unable to fetch weather data. Please try again.');
         }
         
-    
         const data = await response.json();
+        currentWeatherData = data;
         displayWeather(data);
         
     } catch (error) {
-        if (error.message.includes('fetch')){
+        if (error.message.includes('fetch')) {
             weatherDisplay.innerHTML = '<p style="color: red;">Network error. Check your internet connection.</p>';
         } else {
             weatherDisplay.innerHTML = `<p style="color: red;">${error.message}</p>`;
-        } 
+        }
     }
 }
 
-// Function to display weather data
+// Switch temperature unit
+function switchUnit(unit) {
+    currentUnit = unit;
+    
+    // Update button styles
+    if (unit === 'celsius') {
+        celsiusBtn.classList.add('active');
+        fahrenheitBtn.classList.remove('active');
+    } else {
+        fahrenheitBtn.classList.add('active');
+        celsiusBtn.classList.remove('active');
+    }
+    
+    // Re-display weather with new unit if data exists
+    if (currentWeatherData) {
+        displayWeather(currentWeatherData);
+    }
+}
+
+// Convert Celsius to Fahrenheit
+function celsiusToFahrenheit(celsius) {
+    return (celsius * 9/5) + 32;
+}
+
+// Display weather data
 function displayWeather(data) {
     const { name, main, weather, wind } = data;
+    
+    // Convert temperatures based on current unit
+    let temp = main.temp;
+    let feelsLike = main.feels_like;
+    let unitSymbol = '°C';
+    
+    if (currentUnit === 'fahrenheit') {
+        temp = celsiusToFahrenheit(temp);
+        feelsLike = celsiusToFahrenheit(feelsLike);
+        unitSymbol = '°F';
+    }
     
     const html = `
         <h2>${name}</h2>
         <div class="weather-info">
             <img src="https://openweathermap.org/img/wn/${weather[0].icon}@2x.png" alt="${weather[0].description}">
-            <p class="temperature">${Math.round(main.temp)}°C</p>
+            <p class="temperature">${Math.round(temp)}${unitSymbol}</p>
             <p class="description">${weather[0].description}</p>
             <div class="details">
-                <p>Feels like: ${Math.round(main.feels_like)}°C</p>
+                <p>Feels like: ${Math.round(feelsLike)}${unitSymbol}</p>
                 <p>Humidity: ${main.humidity}%</p>
                 <p>Wind Speed: ${wind.speed} m/s</p>
             </div>
